@@ -10,9 +10,10 @@ import hu.sutoadam.vendingmachine.model.Report;
 
 public interface VendingMachine {
 	List<Product> getProductList();
-	void putCoin(Map<String,Integer> coins);
-	PurchaseResult purchaseProduct(String productName);
+	List<Coin> getAcceptableCoins();
+	Coin putCoin(Coin coin);
+	PurchaseResult purchaseProduct(Product product);
 	List<Coin> refund();
-	void reset(String masterKey);
+	void reset(String masterKey, List<Coin> coins, List<Product> products);
 	Report getReports(String masterKey);
 }
