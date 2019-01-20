@@ -150,7 +150,13 @@ public class VendingMachineTest {
 
 	@Test
 	public void testRefund() {
-		fail("Not yet implemented");
+		List<Coin> expectedCoins = TestUtils.getExpectedCoins();
+		expectedCoins.stream()
+				.forEach(coin ->vendingMachine.putCoin(coin));
+		
+		List<Coin> actualCoins = vendingMachine.refund();
+		
+		assertEquals(expectedCoins, actualCoins);
 	}
 
 	@Test

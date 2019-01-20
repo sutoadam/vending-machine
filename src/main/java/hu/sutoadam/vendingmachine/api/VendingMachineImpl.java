@@ -79,8 +79,9 @@ public class VendingMachineImpl implements VendingMachine {
 
 	@Override
 	public List<Coin> refund() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Coin> refundedCoins = new ArrayList<>(userCoins);
+		userCoins.clear();
+		return refundedCoins;
 	}
 
 	@Override
