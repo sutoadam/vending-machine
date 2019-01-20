@@ -27,6 +27,6 @@ public class VendingMachineFactory {
 		productList.add(new Product("Soda",45));
 		
 		String masterKey = "open sesame";
-		return new Options(acceptableCoins, productList, masterKey);
+		return new Options(acceptableCoins, productList, 1, masterKey);
 	}
 }

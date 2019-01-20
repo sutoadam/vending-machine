@@ -8,13 +8,19 @@ import hu.sutoadam.vendingmachine.model.Product;
 public class Options {
 	private List<Coin> acceptableCoins;
 	private List<Product> productList;
+	private int numberOfItems;
 	private String masterKey;
-	
-	public Options(List<Coin> acceptableCoins, List<Product> productList, String masterKey) {
+
+	public Options(List<Coin> acceptableCoins, List<Product> productList, int numberOfItems, String masterKey) {
 		super();
 		this.acceptableCoins = acceptableCoins;
 		this.productList = productList;
+		this.numberOfItems = numberOfItems;
 		this.masterKey = masterKey;
+	}
+
+	public int getNumberOfItems() {
+		return numberOfItems;
 	}
 
 	public List<Coin> getAcceptableCoins() {
