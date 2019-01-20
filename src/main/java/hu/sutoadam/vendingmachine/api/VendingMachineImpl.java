@@ -2,6 +2,7 @@ package hu.sutoadam.vendingmachine.api;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class VendingMachineImpl implements VendingMachine {
 	private List<Coin> acceptableCoins = new ArrayList<>();
 	private List<Coin> userCoins = new ArrayList<>();
 	private String masterKey;
+	private Map<Product,Integer> report = new HashMap<>();
 	
 	public VendingMachineImpl(Options options) {
 		super();
@@ -91,9 +93,8 @@ public class VendingMachineImpl implements VendingMachine {
 
 	@Override
 	public void reset(String masterKey, List<Product> products, int numberOfItems) throws MasterKeyWrongException {
-		if(!masterKey.equals(masterKey)) {
-			throw new MasterKeyWrongException("Master key is wrong! Please dont try to hack me.");
-		}
+		checkMasterKey(masterKey);
+		report.clear();
 		userCoins.clear();
 		coinStore.clear();
 		productStore.clear();
@@ -101,9 +102,15 @@ public class VendingMachineImpl implements VendingMachine {
 	}
 
 	@Override
-	public Report getReports(String masterKey) {
-		// TODO Auto-generated method stub
-		return null;
+	public Report getReports(String masterKey) throws MasterKeyWrongException {
+		checkMasterKey(masterKey);
+		return new Report(report);
+	}
+	
+	private void checkMasterKey(String masterKey) throws MasterKeyWrongException {
+		if(!masterKey.equals(masterKey)) {
+			throw new MasterKeyWrongException("Master key is wrong! Please dont try to hack me.");
+		}
 	}
 	
 	private PurchaseResult handleChangeCantBeCompleted(List<Coin> coins) {
@@ -112,11 +119,21 @@ public class VendingMachineImpl implements VendingMachine {
 	}
 
 	private PurchaseResult handleOk(Product product, List<Coin> coins) {
+		addProductToReport(product);
 		removeChangeCoinsFromStore(coins);
 		productStore.removeOneQuantity(product);
 		mergeUserCoinsWithCoinStore();
 		userCoins.clear();
 		return new PurchaseResult(PurchaseResultType.OK,Optional.of(product), coins);
+	}
+	
+	private void addProductToReport(Product product) {
+		Integer quantity = report.get(product);
+		if(quantity == null) {
+			report.put(product, 1);
+		} else {
+			report.put(product, quantity + 1);
+		}
 	}
 
 	private PurchaseResult handleInsufficientBalance() {

@@ -3,7 +3,9 @@ package hu.sutoadam.vendingmachine.api;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.After;
@@ -16,6 +18,7 @@ import hu.sutoadam.vendingmachine.model.Coin;
 import hu.sutoadam.vendingmachine.model.Product;
 import hu.sutoadam.vendingmachine.model.PurchaseResult;
 import hu.sutoadam.vendingmachine.model.PurchaseResultType;
+import hu.sutoadam.vendingmachine.model.Report;
 
 public class VendingMachineTest {
 
@@ -172,8 +175,34 @@ public class VendingMachineTest {
 	}
 
 	@Test
-	public void testGetReports() {
-		fail("Not yet implemented");
+	public void testGetReports_when_wrongMasterKeyGranted_expected_exceptionThrown() {
+		try {
+			vendingMachine.getReports("wrong");
+		} catch (MasterKeyWrongException e) {
+			assertEquals(e.getMessage(), "Master key is wrong! Please dont try to hack me.");
+		}
+	}
+	
+	@Test
+	public void testGetReports_when_soldTwoProduct_expected_getBackReports() {
+		
+		Map<Product,Integer> reportMap = new HashMap<>();
+		reportMap.put(TestUtils.getCoke(), 1);
+		reportMap.put(TestUtils.getPepsi(), 1);
+		Report expectedReport = new Report(reportMap);
+		
+		vendingMachine.putCoin(TestUtils.getQuarterCoin());
+		vendingMachine.purchaseProduct(TestUtils.getCoke());
+		vendingMachine.putCoin(TestUtils.getQuarterCoin());
+		vendingMachine.putCoin(TestUtils.getDimeCoin());
+		vendingMachine.purchaseProduct(TestUtils.getPepsi());
+		
+		try {
+			Report actualReport = vendingMachine.getReports("sezame open");
+			assertEquals(expectedReport.getProductConsumption(), actualReport.getProductConsumption());
+		} catch (MasterKeyWrongException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

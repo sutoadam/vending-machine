@@ -3,14 +3,14 @@ package hu.sutoadam.vendingmachine.model;
 import java.util.Map;
 
 public class Report {
-	private Map<String,Integer> productConsumption;
+	private Map<Product,Integer> productConsumption;
 
-	public Report(Map<String, Integer> productConsumption) {
+	public Report(Map<Product, Integer> productConsumption) {
 		super();
 		this.productConsumption = productConsumption;
 	}
 
-	public Map<String, Integer> getProductConsumption() {
+	public Map<Product, Integer> getProductConsumption() {
 		return productConsumption;
 	}
 

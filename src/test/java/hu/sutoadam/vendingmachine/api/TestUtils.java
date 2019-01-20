@@ -39,4 +39,8 @@ public class TestUtils {
 	public static Product getCoke() {
 		return new Product("Coke",25);
 	}
+	
+	public static Product getPepsi() {
+		return new Product("Pepsi",35);
+	}
 }

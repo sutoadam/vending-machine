@@ -17,5 +17,5 @@ public interface VendingMachine {
 	PurchaseResult purchaseProduct(Product product);
 	List<Coin> refund();
 	void reset(String masterKey, List<Product> products,int numberOfProducts) throws MasterKeyWrongException;
-	Report getReports(String masterKey);
+	Report getReports(String masterKey) throws MasterKeyWrongException;
 }
