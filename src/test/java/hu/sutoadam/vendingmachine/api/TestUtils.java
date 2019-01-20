@@ -23,4 +23,8 @@ public class TestUtils {
 		expectedCoins.add(new Coin("quarter",25));
 		return expectedCoins;
 	}
+	
+	public static Coin getInvalidCoin() {
+		return new Coin("forint",0);
+	}
 }

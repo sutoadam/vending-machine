@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.After;
 import org.junit.Before;
@@ -46,8 +47,23 @@ public class VendingMachineTest {
 	}
 
 	@Test
-	public void testPutCoin() {
-		fail("Not yet implemented");
+	public void testPutCoin_when_validCoinInserted() {
+		Coin validCoin = TestUtils.getExpectedCoins().get(0);
+		Optional<Coin> expectedNoCoin = Optional.empty();
+		
+		Optional<Coin> noCoin = vendingMachine.putCoin(validCoin);
+		
+		assertEquals(expectedNoCoin, noCoin);
+	}
+	
+	@Test
+	public void testPutCoin_when_invalidCoinInserted() {
+		Coin invalidCoin = TestUtils.getInvalidCoin();
+		Optional<Coin> expectedInvalidCoin = Optional.of(invalidCoin);
+		
+		Optional<Coin> actualInvalidCoin = vendingMachine.putCoin(invalidCoin);
+		
+		assertEquals(expectedInvalidCoin, actualInvalidCoin);
 	}
 
 	@Test

@@ -3,6 +3,7 @@ package hu.sutoadam.vendingmachine.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import hu.sutoadam.vendingmachine.model.Coin;
@@ -44,9 +45,13 @@ public class VendingMachineImpl implements VendingMachine {
 	}
 
 	@Override
-	public Coin putCoin(Coin coin) {
-		// TODO Auto-generated method stub
-		return coin;
+	public Optional<Coin> putCoin(Coin coin) {
+		if(isCoinValid(coin)) {
+			userCoins.add(acceptableCoins.get(acceptableCoins.indexOf(coin)));
+			return Optional.empty();
+		} else {
+			return Optional.of(coin);
+		}
 	}
 
 	@Override
@@ -71,5 +76,9 @@ public class VendingMachineImpl implements VendingMachine {
 	public Report getReports(String masterKey) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private boolean isCoinValid(Coin coin) {
+		return acceptableCoins.contains(coin);
 	}
 }
