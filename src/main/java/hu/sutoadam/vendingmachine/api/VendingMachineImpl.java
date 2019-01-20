@@ -60,19 +60,19 @@ public class VendingMachineImpl implements VendingMachine {
 
 	@Override
 	public PurchaseResult purchaseProduct(Product product) {
-		if(!productStore.hasItem(product)) {
-			return finalizePurchase(PurchaseResultType.PRODUCT_SOLD_OUT, Optional.empty(), userCoins);
-		}
-		int balance = getBalanceFromUserCoins();
 		Product validatedProduct = productStore.getItem(product);
+		if(!productStore.hasItem(validatedProduct)) {
+			return handleProductSoldOut(new ArrayList<Coin>(userCoins));
+		}
+		int balance = calculateUserBalance();
 		if(validatedProduct.getPrice() > balance) {
-			return finalizePurchase(PurchaseResultType.INSUFFICIENT_BALANCE, Optional.empty(), new ArrayList<>());
+			return handleInsufficientBalance();
 		} else {
 			Optional<List<Coin>> change = calculateChange(balance - validatedProduct.getPrice());
 			if(change.isPresent()) {
-				return finalizePurchase(PurchaseResultType.OK, Optional.of(validatedProduct), change.get());
+				return handleOk(validatedProduct,change.get());
 			} else {
-				return finalizePurchase(PurchaseResultType.CHANGE_CANT_BE_COMPLETED, Optional.empty(), userCoins);
+				return handleChangeCantBeCompleted(new ArrayList<Coin>(userCoins));
 			}
 		}
 	}
@@ -95,32 +95,33 @@ public class VendingMachineImpl implements VendingMachine {
 		return null;
 	}
 	
-	private PurchaseResult finalizePurchase(PurchaseResultType result,Optional<Product> product,List<Coin> change) {
-		if(result.equals(PurchaseResultType.OK)) {
-			removeChangeCoinsFromStore(change);
-			productStore.removeOneQuantity(product.get());
-			mergeUsersCoinsWithCoinStore();
-			List<Coin> coinReturns = new ArrayList<>(change);
-			userCoins.clear();
-			return new PurchaseResult(result,product, coinReturns);
-		} else if(result.equals(PurchaseResultType.PRODUCT_SOLD_OUT)) {
-			List<Coin> coinReturns = new ArrayList<>(change);
-			userCoins.clear();
-			return new PurchaseResult(result, Optional.empty(), coinReturns);
-		} else if(result.equals(PurchaseResultType.INSUFFICIENT_BALANCE)) {
-			return new PurchaseResult(result, Optional.empty(), change);
-		} else {
-			List<Coin> coinReturns = new ArrayList<>(change);
-			userCoins.clear();
-			return new PurchaseResult(PurchaseResultType.CHANGE_CANT_BE_COMPLETED, Optional.empty(), coinReturns);
-		}
+	private PurchaseResult handleChangeCantBeCompleted(List<Coin> coins) {
+		userCoins.clear();
+		return new PurchaseResult(PurchaseResultType.CHANGE_CANT_BE_COMPLETED, Optional.empty(), coins);
+	}
+
+	private PurchaseResult handleOk(Product product, List<Coin> coins) {
+		removeChangeCoinsFromStore(coins);
+		productStore.removeOneQuantity(product);
+		mergeUserCoinsWithCoinStore();
+		userCoins.clear();
+		return new PurchaseResult(PurchaseResultType.OK,Optional.of(product), coins);
+	}
+
+	private PurchaseResult handleInsufficientBalance() {
+		return new PurchaseResult(PurchaseResultType.INSUFFICIENT_BALANCE, Optional.empty(), new ArrayList<>());
+	}
+
+	private PurchaseResult handleProductSoldOut(List<Coin> coins) {
+		userCoins.clear();
+		return new PurchaseResult(PurchaseResultType.PRODUCT_SOLD_OUT, Optional.empty(), coins);
 	}
 	
 	private void removeChangeCoinsFromStore(List<Coin> change) {
 		change.stream().forEach(coin -> coinStore.removeOneQuantity(coin));
 	}
 
-	private void mergeUsersCoinsWithCoinStore() {
+	private void mergeUserCoinsWithCoinStore() {
 		userCoins.stream().forEach(coin -> coinStore.addOneQuantity(coin));
 	}
 	
@@ -128,7 +129,7 @@ public class VendingMachineImpl implements VendingMachine {
 		return acceptableCoins.contains(coin);
 	}
 	
-	private int getBalanceFromUserCoins() {
+	private int calculateUserBalance() {
 		int balance = 0;
 		for(Coin coin :userCoins) {
 			balance += coin.getValue();
@@ -137,24 +138,24 @@ public class VendingMachineImpl implements VendingMachine {
 	}
 	
 	private Optional<List<Coin>> calculateChange(int change) {
-		List<Coin> changes = new ArrayList<>();
+		List<Coin> coins = new ArrayList<>();
 		while(change > 0) {
 			boolean hasCoin = false;
 			for(Coin coin : acceptableCoins) {
 				if(change >= coin.getValue() && coinStore.hasItem(coin)) {
 					coinStore.removeOneQuantity(coin);
-					changes.add(coin);
+					coins.add(coin);
 					change -= coin.getValue();
 					hasCoin = true;
 					break;
 				}
 			}
 			if(!hasCoin) {
-				revertCoinStore(changes);
+				revertCoinStore(coins);
 				return Optional.empty();
 			}
 		}
-		return Optional.of(changes);
+		return Optional.of(coins);
 	}
 	
 	private void revertCoinStore(List<Coin> coins) {
