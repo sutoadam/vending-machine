@@ -50,7 +50,7 @@ public class VendingMachineTest {
 
 	@Test
 	public void testPutCoin_when_validCoinInserted_expected_noCoin() {
-		Coin validCoin = TestUtils.getExpectedCoins().get(0);
+		Coin validCoin = TestUtils.getQuarterCoin();
 		Optional<Coin> expectedNoCoin = Optional.empty();
 		
 		Optional<Coin> noCoin = vendingMachine.putCoin(validCoin);
@@ -70,10 +70,11 @@ public class VendingMachineTest {
 
 	@Test
 	public void testPurchaseProduct_when_exactBalanceAdded_expected_returnProduct() {
-		PurchaseResult expectedResult = new PurchaseResult(PurchaseResultType.OK, Optional.of(new Product("Coke", 25)), new ArrayList<>()); 
+		Product coke = TestUtils.getCoke();
+		PurchaseResult expectedResult = new PurchaseResult(PurchaseResultType.OK, Optional.of(coke), new ArrayList<>()); 
 		
-		vendingMachine.putCoin(new Coin("quarter",25));
-		PurchaseResult actualResult = vendingMachine.purchaseProduct(new Product("Coke", 25));
+		vendingMachine.putCoin(TestUtils.getQuarterCoin());
+		PurchaseResult actualResult = vendingMachine.purchaseProduct(coke);
 		
 		assertEquals(expectedResult.getResult(), actualResult.getResult());
 		assertEquals(expectedResult.getChange(), actualResult.getChange());
@@ -82,14 +83,15 @@ public class VendingMachineTest {
 	
 	@Test
 	public void testPurchaseProduct_when_moreBalanceAdded_expected_returnProductAndChange() {
-		Coin quarter = new Coin("quarter", 25);
+		Coin quarter = TestUtils.getQuarterCoin();
+		Product coke = TestUtils.getCoke();
 		List<Coin> changes = new ArrayList<>();
 		changes.add(quarter);
-		PurchaseResult expectedResult = new PurchaseResult(PurchaseResultType.OK, Optional.of(new Product("Coke", 25)), changes); 
+		PurchaseResult expectedResult = new PurchaseResult(PurchaseResultType.OK, Optional.of(coke), changes); 
 		
 		vendingMachine.putCoin(quarter);
 		vendingMachine.putCoin(quarter);
-		PurchaseResult actualResult = vendingMachine.purchaseProduct(new Product("Coke", 25));
+		PurchaseResult actualResult = vendingMachine.purchaseProduct(coke);
 		
 		assertEquals(expectedResult.getResult(), actualResult.getResult());
 		assertEquals(expectedResult.getChange(), actualResult.getChange());
@@ -98,16 +100,16 @@ public class VendingMachineTest {
 	
 	@Test
 	public void testPurchaseProduct_when_noProductCanBeReturned_expected_returnChange() {
-		Coin quarter = new Coin("quarter", 25);
+		Product coke = TestUtils.getCoke();
+		Coin quarter = TestUtils.getQuarterCoin();
 		List<Coin> changes = new ArrayList<>();
 		changes.add(quarter);
 		PurchaseResult expectedResult = new PurchaseResult(PurchaseResultType.PRODUCT_SOLD_OUT, Optional.empty(), changes); 
 		
 		vendingMachine.putCoin(quarter);
-		vendingMachine.purchaseProduct(new Product("Coke", 25));
-		
+		vendingMachine.purchaseProduct(coke);
 		vendingMachine.putCoin(quarter);
-		PurchaseResult actualResult = vendingMachine.purchaseProduct(new Product("Coke", 25));
+		PurchaseResult actualResult = vendingMachine.purchaseProduct(coke);
 		
 		assertEquals(expectedResult.getResult(), actualResult.getResult());
 		assertEquals(expectedResult.getChange(), actualResult.getChange());
@@ -118,9 +120,9 @@ public class VendingMachineTest {
 	public void testPurchaseProduct_when_notEnoughBalance_expected_returnState() {
 		PurchaseResult expectedResult = new PurchaseResult(PurchaseResultType.INSUFFICIENT_BALANCE, Optional.empty(), new ArrayList<>()); 
 		
-		Coin dime = new Coin("dime", 10);
+		Coin dime = TestUtils.getDimeCoin();
 		vendingMachine.putCoin(dime);
-		PurchaseResult actualResult = vendingMachine.purchaseProduct(new Product("Coke", 25));
+		PurchaseResult actualResult = vendingMachine.purchaseProduct(TestUtils.getCoke());
 		
 		assertEquals(expectedResult.getResult(), actualResult.getResult());
 		assertEquals(expectedResult.getChange(), actualResult.getChange());
@@ -129,7 +131,7 @@ public class VendingMachineTest {
 	
 	@Test
 	public void testPurchaseProduct_when_notEnoughCoinInStash_expected_returnUserCoins() {
-		Coin quarter = new Coin("quarter", 25);
+		Coin quarter = TestUtils.getQuarterCoin();
 		List<Coin> coinList = new ArrayList<>();
 		coinList.add(quarter);
 		coinList.add(quarter);
@@ -139,7 +141,7 @@ public class VendingMachineTest {
 		vendingMachine.putCoin(quarter);
 		vendingMachine.putCoin(quarter);
 		vendingMachine.putCoin(quarter);
-		PurchaseResult actualResult = vendingMachine.purchaseProduct(new Product("Coke", 25));
+		PurchaseResult actualResult = vendingMachine.purchaseProduct(TestUtils.getCoke());
 		
 		assertEquals(expectedResult.getResult(), actualResult.getResult());
 		assertEquals(expectedResult.getChange(), actualResult.getChange());

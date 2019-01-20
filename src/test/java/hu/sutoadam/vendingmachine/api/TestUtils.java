@@ -27,4 +27,16 @@ public class TestUtils {
 	public static Coin getInvalidCoin() {
 		return new Coin("forint",0);
 	}
+	
+	public static Coin getQuarterCoin() {
+		return new Coin("quarter",25);
+	}
+	
+	public static Coin getDimeCoin() {
+		return new Coin("dime",10);
+	}
+	
+	public static Product getCoke() {
+		return new Product("Coke",25);
+	}
 }
