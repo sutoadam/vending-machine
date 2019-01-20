@@ -26,6 +26,12 @@ public class PurchaseResult {
 	public List<Coin> getChange() {
 		return change;
 	}
+
+	@Override
+	public String toString() {
+		return "PurchaseResult [result=" + result + ", product=" + product + ", change=" + change + "]";
+	}
+	
 	
 	
 }
