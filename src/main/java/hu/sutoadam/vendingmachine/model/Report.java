@@ -13,4 +13,9 @@ public class Report {
 	public Map<String, Integer> getProductConsumption() {
 		return productConsumption;
 	}
+
+	@Override
+	public String toString() {
+		return "Report [productConsumption=" + productConsumption + "]";
+	}
 }

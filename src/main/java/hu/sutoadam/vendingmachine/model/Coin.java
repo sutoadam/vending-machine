@@ -42,6 +42,12 @@ public class Coin {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Coin [name=" + name + ", value=" + value + "]";
+	}
+	
 	
 	
 }
