@@ -17,10 +17,10 @@ public class TestUtils {
 	
 	public static List<Coin> getExpectedCoins(){
 		List<Coin> expectedCoins = new ArrayList<>();
-		expectedCoins.add(new Coin("penny",1));
-		expectedCoins.add(new Coin("nickel",5));
-		expectedCoins.add(new Coin("dime",10));
 		expectedCoins.add(new Coin("quarter",25));
+		expectedCoins.add(new Coin("dime",10));
+		expectedCoins.add(new Coin("nickel",5));
+		expectedCoins.add(new Coin("penny",1));
 		return expectedCoins;
 	}
 	
