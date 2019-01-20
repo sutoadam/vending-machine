@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import hu.sutoadam.vendingmachine.exceptions.MasterKeyWrongException;
 import hu.sutoadam.vendingmachine.factory.VendingMachineFactory;
 import hu.sutoadam.vendingmachine.model.Coin;
 import hu.sutoadam.vendingmachine.model.Product;
@@ -160,8 +161,14 @@ public class VendingMachineTest {
 	}
 
 	@Test
-	public void testReset() {
-		fail("Not yet implemented");
+	public void testReset_when_wrongMasterKeyGranted_expected_exceptionThrown() {
+		List<Product> products = TestUtils.getExpectedProducts();
+		
+		try {
+			vendingMachine.reset("wrong", products, 10);
+		} catch (MasterKeyWrongException e) {
+			assertEquals(e.getMessage(), "Master key is wrong! Please dont try to hack me.");
+		}
 	}
 
 	@Test

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.print.attribute.standard.MediaSize.Other;
 
+import hu.sutoadam.vendingmachine.exceptions.MasterKeyWrongException;
 import hu.sutoadam.vendingmachine.model.Coin;
 import hu.sutoadam.vendingmachine.model.Product;
 import hu.sutoadam.vendingmachine.model.PurchaseResult;
@@ -32,10 +33,14 @@ public class VendingMachineImpl implements VendingMachine {
 		masterKey = options.getMasterKey();
 		acceptableCoins = options.getAcceptableCoins().stream()
 				.sorted((coin1,coin2) -> Integer.compare(coin2.getValue(),coin1.getValue())).collect(Collectors.toList());
+		fillStores(options.getProductList(),options.getNumberOfItems());
+	}
+	
+	private void fillStores(List<Product> productList, int numberOfItems) {
 		acceptableCoins.stream()
-			.forEach(coin -> coinStore.fill(coin, options.getNumberOfItems()));
-		options.getProductList().stream()
-			.forEach(product -> productStore.fill(product, options.getNumberOfItems()));
+			.forEach(coin -> coinStore.fill(coin, numberOfItems));
+		productList.stream()
+			.forEach(product -> productStore.fill(product, numberOfItems));
 	}
 
 	@Override
@@ -81,13 +86,18 @@ public class VendingMachineImpl implements VendingMachine {
 	public List<Coin> refund() {
 		List<Coin> refundedCoins = new ArrayList<>(userCoins);
 		userCoins.clear();
-		return refundedCoins;
+		return refundedCoins; 
 	}
 
 	@Override
-	public void reset(String masterKey, List<Coin> coins, List<Product> products) {
-		// TODO Auto-generated method stub
-		
+	public void reset(String masterKey, List<Product> products, int numberOfItems) throws MasterKeyWrongException {
+		if(!masterKey.equals(masterKey)) {
+			throw new MasterKeyWrongException("Master key is wrong! Please dont try to hack me.");
+		}
+		userCoins.clear();
+		coinStore.clear();
+		productStore.clear();
+		fillStores(products, numberOfItems);
 	}
 
 	@Override
