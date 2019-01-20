@@ -1,4 +1,4 @@
-package hu.sutoadam.vendingmachine.api;
+package hu.sutoadam.vendingmachine;
 
 import java.util.ArrayList;
 import java.util.List;

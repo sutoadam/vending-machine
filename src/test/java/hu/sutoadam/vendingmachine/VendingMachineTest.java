@@ -1,4 +1,4 @@
-package hu.sutoadam.vendingmachine.api;
+package hu.sutoadam.vendingmachine;
 
 import static org.junit.Assert.*;
 
@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import hu.sutoadam.vendingmachine.api.VendingMachine;
 import hu.sutoadam.vendingmachine.exceptions.MasterKeyWrongException;
 import hu.sutoadam.vendingmachine.factory.VendingMachineFactory;
 import hu.sutoadam.vendingmachine.model.Coin;
