@@ -47,7 +47,7 @@ public class VendingMachineTest {
 	}
 
 	@Test
-	public void testPutCoin_when_validCoinInserted() {
+	public void testPutCoin_when_validCoinInserted_expected_noCoin() {
 		Coin validCoin = TestUtils.getExpectedCoins().get(0);
 		Optional<Coin> expectedNoCoin = Optional.empty();
 		
@@ -57,7 +57,7 @@ public class VendingMachineTest {
 	}
 	
 	@Test
-	public void testPutCoin_when_invalidCoinInserted() {
+	public void testPutCoin_when_invalidCoinInserted_expected_coinReturned() {
 		Coin invalidCoin = TestUtils.getInvalidCoin();
 		Optional<Coin> expectedInvalidCoin = Optional.of(invalidCoin);
 		
